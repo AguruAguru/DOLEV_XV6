@@ -31,6 +31,16 @@ exec(char *path, char **argv)
   pagetable_t pagetable = 0, oldpagetable;
   struct proc *p = myproc();
 
+  // if (!memcmp(path, "trace_exec", strlen("trace_exec"))) {
+  //   path = argv[1];
+  //   res = 0;
+  //   for (i = 0; argv[0][i] != '\0'; ++i)
+  //       res = res * 10 + argv[0][i] - '0';
+
+  //   p->trace_mask = res;
+  //   argv += 1;
+  // }
+
   begin_op();
 
   if((ip = namei(path)) == 0){

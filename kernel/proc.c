@@ -5,6 +5,7 @@
 #include "spinlock.h"
 #include "proc.h"
 #include "defs.h"
+#include "sysinfo.h"
 
 struct cpu cpus[NCPU];
 
@@ -287,6 +288,7 @@ fork(void)
   if((np = allocproc()) == 0){
     return -1;
   }
+  np->trace_mask = p->trace_mask;
 
   // Copy user memory from parent to child.
   if(uvmcopy(p->pagetable, np->pagetable, p->sz) < 0){
@@ -323,6 +325,27 @@ fork(void)
   release(&np->lock);
 
   return pid;
+}
+
+int trace(int n) {
+  myproc()->trace_mask = n;
+  return 0; 
+}
+
+int sysinfo(struct sysinfo *ptr) {
+  struct proc *p;
+  int i = 0;
+
+  for(p = proc; p < &proc[NPROC]; p++) { 
+    acquire(&p->lock);   
+    if (p->state != UNUSED)
+      i++;
+    release(&p->lock);   
+  }
+
+  ptr->freemem = memcount();
+  ptr->nproc = i;
+  return 0;
 }
 
 // Pass p's abandoned children to init.

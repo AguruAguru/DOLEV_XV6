@@ -8,6 +8,7 @@ struct spinlock;
 struct sleeplock;
 struct stat;
 struct superblock;
+struct sysinfo;
 
 // bio.c
 void            binit(void);
@@ -24,6 +25,7 @@ void            consputc(int);
 
 // exec.c
 int             exec(char*, char**);
+int             exec_trace(char*, char**);
 
 // file.c
 struct file*    filealloc(void);
@@ -63,6 +65,7 @@ void            ramdiskrw(struct buf*);
 void*           kalloc(void);
 void            kfree(void *);
 void            kinit(void);
+uint64          memcount(void);
 
 // log.c
 void            initlog(int, struct superblock*);
@@ -85,6 +88,8 @@ void            printfinit(void);
 int             cpuid(void);
 void            exit(int);
 int             fork(void);
+int             trace(int);
+int             sysinfo(struct sysinfo *);
 int             growproc(int);
 void            proc_mapstacks(pagetable_t);
 pagetable_t     proc_pagetable(struct proc *);

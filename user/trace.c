@@ -1,10 +1,13 @@
 #include "kernel/param.h"
 #include "kernel/types.h"
 #include "kernel/stat.h"
+// #include "kernel/proc.h"
+// #include "kernel/defs.h"
 #include "user/user.h"
 
-int
-main(int argc, char *argv[])
+
+
+int main(int argc, char *argv[])
 {
   int i;
   char *nargv[MAXARG];
@@ -14,14 +17,20 @@ main(int argc, char *argv[])
     exit(1);
   }
 
-  if (trace(atoi(argv[1])) < 0) {
+  if (trace( atoi(argv[1])) < 0) {
     fprintf(2, "%s: trace failed\n", argv[0]);
     exit(1);
   }
   
   for(i = 2; i < argc && i < MAXARG; i++){
     nargv[i-2] = argv[i];
+    // fprintf(1, argv[i]);
   }
+  // printf("ighksjgskdgj");
+  // fprintf(1, argv[0]);
+  // fprintf(1, argv[1]);
+  // exit(0);
+  // nargv[0] = argv[1];
   exec(nargv[0], nargv);
   exit(0);
 }

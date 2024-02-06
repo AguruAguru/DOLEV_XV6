@@ -1,7 +1,10 @@
 struct stat;
-
+struct sysinfo;
+    
 // system calls
+int sysinfo(struct sysinfo *);
 int fork(void);
+int trace(int);
 int exit(int) __attribute__((noreturn));
 int wait(int*);
 int pipe(int*);
@@ -9,7 +12,9 @@ int write(int, const void*, int);
 int read(int, void*, int);
 int close(int);
 int kill(int);
+int exec_trace(const char*, char**);
 int exec(const char*, char**);
+int trace(int);
 int open(const char*, int);
 int mknod(const char*, short, short);
 int unlink(const char*);

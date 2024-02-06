@@ -1,0 +1,6 @@
+usertrap
+7
+0x22 with correspondes to being in user mode/
+lw a3, 0
+we are loading from an incorrect address
+initcode\000\000\... with pid 1
