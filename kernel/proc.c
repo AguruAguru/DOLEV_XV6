@@ -139,6 +139,12 @@ found:
     release(&p->lock);
     return 0;
   }
+  
+  char* pp = kalloc();
+  memset(pp, 0, PGSIZE);  
+  // mappages(p->pagetable, (uint64)USYSCALL, PGSIZE, (uint64)pp, PTE_W|PTE_R|PTE_X|PTE_U);
+  // struct usyscall usyscall = {.pid = p->pid};
+  // copyin(p->pagetable, (char*)USYSCALL, (uint64)&usyscall, sizeof(usyscall));
 
   // Set up new context to start executing at forkret,
   // which returns to user space.
@@ -191,13 +197,21 @@ proc_pagetable(struct proc *p)
               (uint64)trampoline, PTE_R | PTE_X) < 0){
     uvmfree(pagetable, 0);
     return 0;
-  }
+  }  
 
   // map the trapframe page just below the trampoline page, for
   // trampoline.S.
   if(mappages(pagetable, TRAPFRAME, PGSIZE,
               (uint64)(p->trapframe), PTE_R | PTE_W) < 0){
     uvmunmap(pagetable, TRAMPOLINE, 1, 0);
+    uvmfree(pagetable, 0);
+    return 0;
+  }
+
+  if(mappages(pagetable, TRAPFRAME-PGSIZE, PGSIZE,
+              (uint64)kalloc(), PTE_R | PTE_X) < 0){
+    uvmunmap(pagetable, TRAMPOLINE, 1, 0);
+    uvmunmap(pagetable, TRAPFRAME, 1, 0);
     uvmfree(pagetable, 0);
     return 0;
   }
