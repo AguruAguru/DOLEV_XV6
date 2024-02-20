@@ -15,6 +15,39 @@ extern char etext[];  // kernel.ld sets this to end of kernel code.
 
 extern char trampoline[]; // trampoline.S
 
+void
+vmprint_rec(pagetable_t pagetable, char prefix[])
+{
+  int curr_prefix_len = strlen(prefix);  
+  for(int i = 0; i < 512; i++){
+    pte_t pte = pagetable[i];
+    if((pte & PTE_V) && (pte & (PTE_R|PTE_W|PTE_X)) == 0){
+      // this PTE points to a lower-level page table.
+      printf("%s%d: pte %p pa %p\n", prefix, i, pte, pte - (pte&1023));
+      
+      prefix[curr_prefix_len] = ' ';
+      prefix[curr_prefix_len+1] = '.';
+      prefix[curr_prefix_len+2] = '.';
+      // can be done using strcat(prefix, " .."), did not want to handle including
+
+      uint64 child = PTE2PA(pte);
+      vmprint_rec((pagetable_t)child, prefix);
+      prefix[curr_prefix_len] = 0;
+
+    } else if(pte & PTE_V){
+      printf("%s%d: pte %p pa %p\n", prefix, i, pte, pte - (pte&1023));
+    }
+  }
+}
+
+void
+vmprint(pagetable_t pagetable)
+{
+  char prefix[512] = "..";
+  printf("page table %p\n", pagetable); 
+  vmprint_rec(pagetable, prefix);
+}
+
 // Make a direct-map page table for the kernel.
 pagetable_t
 kvmmake(void)
