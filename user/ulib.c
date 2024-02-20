@@ -154,8 +154,9 @@ memcpy(void *dst, const void *src, uint n)
 #ifdef LAB_PGTBL
 int
 ugetpid(void)
-{
-  struct usyscall *u = (struct usyscall *)USYSCALL;
-  return u->pid;
+{  
+  struct usyscall u = *(struct usyscall *)USYSCALL;
+  return u.pid;
+  // return u->pid;
 }
 #endif

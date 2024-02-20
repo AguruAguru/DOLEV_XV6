@@ -94,22 +94,23 @@ sys_uptime(void)
 int
 sys_pgaccess(void)
 {
-  void *start = 0;
+  uint64 start = 0;
   int count = 0;
-  unsigned *target = 0;
+  uint64 target = 0;
   unsigned res = 0;
   pte_t *curr = 0;
   struct proc *p = myproc();
 
-  argaddr(0, (uint64 *)&start);
+  argaddr(0, &start);
   argint(1, &count);
-  argaddr(2, (uint64 *)&target);
+  argaddr(2, &target);
 
   for (int i = 0; i < count; ++i)
   {
-    curr = walk(p->pagetable, (uint64)(start+i), 0);
-    if (PTE_A & (*curr))
+    curr = walk(p->pagetable, start+i*PGSIZE, 0);
+    if (PTE_A & (*curr)) {
       res |= 1<<i;
+    }
     *curr = (*curr) & (~PTE_A);
   }
 
