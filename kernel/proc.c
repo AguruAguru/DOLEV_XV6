@@ -124,6 +124,7 @@ allocproc(void)
 found:
   p->pid = allocpid();
   p->state = USED;
+  memset(&p->alarm, 0, sizeof(p->alarm));
 
   // Allocate a trapframe page.
   if((p->trapframe = (struct trapframe *)kalloc()) == 0){
@@ -680,4 +681,23 @@ procdump(void)
     printf("%d %s %s", p->pid, state, p->name);
     printf("\n");
   }
+}
+
+int 
+sigalarm(int ticks, void (*handler)())
+{
+  struct proc *p = myproc();
+  p->alarm.ticks = ticks;
+  p->alarm.ticks_left = ticks;
+  p->alarm.handler = handler;  
+  return 0;
+}
+
+int 
+sigreturn(void)
+{
+  struct proc *p = myproc();
+  *p->trapframe = p->alarm.recovery_state.trapframe_copy;
+  p->alarm.recovery_state.need_recovering = 0;
+  return p->trapframe->a0;
 }
