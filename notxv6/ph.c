@@ -39,7 +39,6 @@ insert(int key, int value, struct entry **p, struct entry *n)
 static 
 void put(int key, int value)
 {
-  pthread_mutex_lock(&lock);
   int i = key % NBUCKET;
 
   // is the key already present?
@@ -48,11 +47,12 @@ void put(int key, int value)
     if (e->key == key)
       break;
   }
+  pthread_mutex_lock(&lock);
   if(e){
     // update the existing key.
     e->value = value;
   } else {
-    // the new is new.    
+    // the new is new.
     insert(key, value, &table[i], table[i]);
   }  
   pthread_mutex_unlock(&lock);
