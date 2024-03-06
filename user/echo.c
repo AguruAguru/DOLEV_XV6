@@ -6,7 +6,6 @@ int
 main(int argc, char *argv[])
 {
   int i;
-  printf("MYPID %d, REAL %d", ugetpid(), getpid());
 
   for(i = 1; i < argc; i++){
     write(1, argv[i], strlen(argv[i]));

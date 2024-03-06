@@ -23,7 +23,7 @@ vmprint_rec(pagetable_t pagetable, char prefix[])
     pte_t pte = pagetable[i];
     if((pte & PTE_V) && (pte & (PTE_R|PTE_W|PTE_X)) == 0){
       // this PTE points to a lower-level page table.
-      printf("%s%d: pte %p pa %p\n", prefix, i, pte, pte - (pte&1023));
+      printf("%s%d: pte %p pa %p\n", prefix, i, pte, PTE2PA(pte));
       
       prefix[curr_prefix_len] = ' ';
       prefix[curr_prefix_len+1] = '.';
@@ -35,7 +35,7 @@ vmprint_rec(pagetable_t pagetable, char prefix[])
       prefix[curr_prefix_len] = 0;
 
     } else if(pte & PTE_V){
-      printf("%s%d: pte %p pa %p\n", prefix, i, pte, pte - (pte&1023));
+      printf("%s%d: pte %p pa %p\n", prefix, i, pte, PTE2PA(pte));
     }
   }
 }
